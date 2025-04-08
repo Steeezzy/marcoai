@@ -8,6 +8,13 @@ const corsHeaders = {
     "authorization, x-client-info, apikey, content-type",
 };
 
+// Type definition for the use_credits function parameters
+interface UseCreditParams {
+  p_user_id: string;
+  p_amount: number;
+  p_description?: string;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -22,11 +29,11 @@ serve(async (req) => {
     const { userId, amount, description } = await req.json();
 
     // Begin transaction to update credits and record usage
-    const { data, error } = await supabase.rpc("use_credits", {
+    const { data, error } = await supabase.rpc<number>("use_credits", {
       p_user_id: userId,
       p_amount: amount,
       p_description: description,
-    });
+    } as UseCreditParams);
 
     if (error) throw error;
 

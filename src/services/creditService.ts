@@ -21,6 +21,13 @@ interface CreditTransactionRecord {
   description: string | null;
 }
 
+// Type definition for the use_credits function parameters
+interface UseCreditParams {
+  p_user_id: string;
+  p_amount: number;
+  p_description?: string;
+}
+
 export const creditService = {
   // Check if user has enough credits for a specific model
   async hasEnoughCredits(userId: string, modelName: string): Promise<boolean> {
@@ -66,13 +73,13 @@ export const creditService = {
       }
       
       // Begin transaction to update credits and record usage
-      const { error: updateError } = await supabase.rpc('use_credits', { 
-        p_user_id: userId, 
+      const { data, error } = await supabase.rpc<number>('use_credits', {
+        p_user_id: userId,
         p_amount: creditCost,
         p_description: `Used ${modelName}`
-      });
+      } as UseCreditParams);
       
-      if (updateError) throw updateError;
+      if (error) throw error;
       
       return true;
     } catch (error: any) {
