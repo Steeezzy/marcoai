@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { ArrowRight, MessageSquare, Database } from "lucide-react";
+import { ArrowRight, MessageSquare, Database, Code } from "lucide-react";
 import { Link } from "react-router-dom";
 
 const Index = () => {
@@ -19,6 +19,9 @@ const Index = () => {
             <Link to="/connect">
               <Button variant="ghost">Connect Supabase</Button>
             </Link>
+            <Link to="/connect-vscode">
+              <Button variant="ghost">VS Code</Button>
+            </Link>
             <Link to="/chat">
               <Button>Get Started</Button>
             </Link>
@@ -33,7 +36,7 @@ const Index = () => {
         </h1>
         <p className="text-xl text-gray-600 max-w-2xl mb-10">
           Build, create, and interact with AI models without writing code. 
-          Connect your Supabase account for enhanced functionality.
+          Connect your Supabase account and VS Code for enhanced functionality.
         </p>
         <div className="flex flex-col sm:flex-row gap-4">
           <Link to="/chat">
@@ -44,6 +47,11 @@ const Index = () => {
           <Link to="/connect">
             <Button size="lg" variant="outline" className="gap-2">
               Connect Supabase <Database className="h-5 w-5" />
+            </Button>
+          </Link>
+          <Link to="/connect-vscode">
+            <Button size="lg" variant="outline" className="gap-2">
+              Connect VS Code <Code className="h-5 w-5" />
             </Button>
           </Link>
         </div>
@@ -70,10 +78,10 @@ const Index = () => {
             </div>
             <div className="bg-white p-6 rounded-lg shadow-sm">
               <div className="bg-purple-100 p-3 rounded-full w-fit mb-4">
-                <ArrowRight className="h-6 w-6 text-purple-600" />
+                <Code className="h-6 w-6 text-purple-600" />
               </div>
-              <h3 className="text-xl font-semibold mb-2">No-Code Experience</h3>
-              <p className="text-gray-600">Use Marco AI without writing any code. Simple, intuitive interface for everyone.</p>
+              <h3 className="text-xl font-semibold mb-2">VS Code Integration</h3>
+              <p className="text-gray-600">Connect directly to VS Code for a seamless development experience with AI assistance.</p>
             </div>
           </div>
         </div>

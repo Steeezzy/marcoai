@@ -1,7 +1,7 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { MessageSquare, Database, Home } from "lucide-react";
+import { MessageSquare, Database, Home, Code } from "lucide-react";
 
 const NavBar = () => {
   const location = useLocation();
@@ -28,7 +28,13 @@ const NavBar = () => {
           <Link to="/connect">
             <Button variant={location.pathname === "/connect" ? "default" : "ghost"} size="sm" className="gap-1">
               <Database className="h-4 w-4" />
-              <span className="hidden sm:inline">Connect</span>
+              <span className="hidden sm:inline">Supabase</span>
+            </Button>
+          </Link>
+          <Link to="/connect-vscode">
+            <Button variant={location.pathname === "/connect-vscode" ? "default" : "ghost"} size="sm" className="gap-1">
+              <Code className="h-4 w-4" />
+              <span className="hidden sm:inline">VS Code</span>
             </Button>
           </Link>
         </nav>
