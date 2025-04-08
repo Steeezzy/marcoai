@@ -8,6 +8,19 @@ export interface CreditTransaction {
   description: string;
 }
 
+interface UserCredits {
+  credits_remaining: number;
+}
+
+interface CreditTransactionRecord {
+  id: string;
+  user_id: string;
+  amount: number;
+  transaction_type: string;
+  created_at: string;
+  description: string | null;
+}
+
 export const creditService = {
   // Check if user has enough credits for a specific model
   async hasEnoughCredits(userId: string, modelName: string): Promise<boolean> {
@@ -74,7 +87,7 @@ export const creditService = {
   },
   
   // Get transaction history
-  async getTransactionHistory(userId: string) {
+  async getTransactionHistory(userId: string): Promise<CreditTransactionRecord[]> {
     const { data, error } = await supabase
       .from('credit_transactions')
       .select('*')
@@ -86,7 +99,7 @@ export const creditService = {
       throw error;
     }
     
-    return data;
+    return data || [];
   }
 };
 

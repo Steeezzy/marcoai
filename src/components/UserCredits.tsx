@@ -10,6 +10,10 @@ interface UserCreditsProps {
   user: User | null;
 }
 
+interface UserCredits {
+  credits_remaining: number;
+}
+
 export default function UserCredits({ user }: UserCreditsProps) {
   const [credits, setCredits] = useState<number | null>(null);
   const [loading, setLoading] = useState(true);
