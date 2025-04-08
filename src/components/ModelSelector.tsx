@@ -1,5 +1,5 @@
 
-import { Check, ChevronsUpDown } from "lucide-react";
+import { Check, ChevronsUpDown, Info } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Command,
@@ -13,6 +13,12 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
 
@@ -25,17 +31,50 @@ const models = [
   {
     value: "gpt-4o-mini",
     label: "GPT-4o Mini",
-    description: "Fastest model with good capabilities"
+    description: "Fastest model with good capabilities",
+    credits: 1
   },
   {
     value: "gpt-4o",
     label: "GPT-4o",
-    description: "Powerful model with vision capabilities"
+    description: "Powerful model with vision capabilities",
+    credits: 2
   },
   {
     value: "gpt-4.5-preview",
     label: "GPT-4.5 Preview",
-    description: "Most advanced model (preview)"
+    description: "Most advanced model (preview)",
+    credits: 3
+  },
+  {
+    value: "claude-3-haiku",
+    label: "Claude 3 Haiku",
+    description: "Fast and cost-effective for common tasks",
+    credits: 1
+  },
+  {
+    value: "claude-3-sonnet",
+    label: "Claude 3 Sonnet",
+    description: "Balanced performance and intelligence",
+    credits: 2
+  },
+  {
+    value: "claude-3-opus",
+    label: "Claude 3 Opus",
+    description: "Most intelligent and capable Claude model",
+    credits: 3
+  },
+  {
+    value: "gemini-1.5-pro",
+    label: "Gemini 1.5 Pro",
+    description: "Google's advanced multimodal model",
+    credits: 2
+  },
+  {
+    value: "mistral-large",
+    label: "Mistral Large",
+    description: "Powerful Mistral AI flagship model",
+    credits: 2
   }
 ];
 
@@ -79,9 +118,26 @@ const ModelSelector = ({ selectedModel, onSelectModel }: ModelSelectorProps) => 
                       selectedModel === model.value ? "opacity-100" : "opacity-0"
                     )}
                   />
-                  <div>
-                    <div>{model.label}</div>
-                    <div className="text-xs text-gray-500">{model.description}</div>
+                  <div className="flex-1">
+                    <div className="flex items-center">
+                      {model.label}
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger asChild>
+                            <Button variant="ghost" size="sm" className="ml-1 h-4 w-4 p-0">
+                              <Info className="h-3 w-3" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p>{model.description}</p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <div className="text-xs text-gray-500 flex items-center justify-between">
+                      <span>{model.description}</span>
+                      <span className="ml-2 font-semibold text-blue-600">{model.credits} credit{model.credits > 1 ? 's' : ''}</span>
+                    </div>
                   </div>
                 </CommandItem>
               ))}

@@ -2,11 +2,15 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { Send, Bot, User, RefreshCw } from "lucide-react";
+import { Send, Bot, User, RefreshCw, AlertCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import ChatMessage from "@/components/ChatMessage";
 import ModelSelector from "@/components/ModelSelector";
 import NavBar from "@/components/NavBar";
+import { useAuth } from "@/hooks/useAuth";
+import { useNavigate } from "react-router-dom";
+import UserCredits from "@/components/UserCredits";
+import { creditService } from "@/services/creditService";
 
 interface Message {
   role: "user" | "assistant";
@@ -20,6 +24,19 @@ const ChatPage = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [selectedModel, setSelectedModel] = useState("gpt-4o-mini");
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const { user, loading } = useAuth();
+  const navigate = useNavigate();
+
+  // Redirect if not authenticated
+  useEffect(() => {
+    if (!loading && !user) {
+      navigate("/auth");
+      toast({
+        title: "Authentication required",
+        description: "Please log in to use the chat",
+      });
+    }
+  }, [user, loading, navigate]);
 
   // Scroll to bottom of messages
   useEffect(() => {
@@ -28,11 +45,41 @@ const ChatPage = () => {
 
   // Mock AI response function (to be replaced with actual API call)
   const getAIResponse = async (userMessage: string) => {
+    if (!user) {
+      toast({
+        title: "Authentication required",
+        description: "Please log in to continue",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
+      // Check if the user has enough credits
+      const hasEnoughCredits = await creditService.hasEnoughCredits(user.id, selectedModel);
+      
+      if (!hasEnoughCredits) {
+        toast({
+          title: "Not enough credits",
+          description: "Please purchase more credits to continue using this model",
+          variant: "destructive"
+        });
+        setIsLoading(false);
+        return;
+      }
+      
       // Simulate API call delay
       await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Use credits for this request
+      const creditUsageSuccess = await creditService.useCredits(user.id, selectedModel);
+      
+      if (!creditUsageSuccess) {
+        setIsLoading(false);
+        return;
+      }
       
       // Mock response
       const botResponse = `This is a simulated response to: "${userMessage}"\n\nIn a real implementation, this would call an AI model API using the selected model: ${selectedModel}.`;
@@ -91,17 +138,32 @@ const ChatPage = () => {
     });
   };
 
+  if (loading) {
+    return (
+      <div className="flex flex-col h-screen">
+        <NavBar />
+        <div className="container mx-auto px-4 flex-1 flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin h-8 w-8 border-4 border-blue-600 border-t-transparent rounded-full mx-auto mb-4"></div>
+            <p>Loading...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-screen">
       <NavBar />
       
       <div className="container mx-auto px-4 flex-1 flex flex-col max-w-4xl">
-        {/* Model selector */}
-        <div className="py-4 border-b">
+        {/* Model selector and credits info */}
+        <div className="py-4 border-b grid gap-4 md:grid-cols-2">
           <ModelSelector
             selectedModel={selectedModel}
             onSelectModel={setSelectedModel}
           />
+          {user && <UserCredits user={user} />}
         </div>
         
         {/* Chat messages */}
